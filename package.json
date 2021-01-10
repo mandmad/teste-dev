@@ -1,0 +1,18 @@
+{
+  "name": "Projeto",
+  "version": "1.0.0",
+  "description": "Baseado nas regras propostas a aplicação deverá ler um arquivo e retornar as mensagens aptas para envio(que não foram bloqueadas) e seu respectivo broker.",
+  "main": "leitor.js",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "neat-csv": "^6.0.0",
+    "random-words": "^1.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
