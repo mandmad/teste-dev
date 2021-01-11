@@ -12,23 +12,17 @@ fs.createReadStream('ENTRADA.csv')
 
 
   
-  if (row.DDD != 11){
-    if (row.MENSAGEM.length < 140){
-      if (row.DDD.length == 2){
-        if  (row.DDD > 2){  
-          if (row.CELULAR.length == 9){
-            if (row.CELULAR.substring(0, 1) == 9){
-              if (row.CELULAR.substring(1, 2) >= 6){
-                if ((row.HORARIO_ENVIO < '19:59:59') && (row.HORARIO_ENVIO > '08:00:00')){
-                  VALIDA = "sim";
-                }
-              }
-            }
-          }
-        }                                                               
-      }
-    }
-  } 
+  if ((row.DDD != 11) &&
+      (row.MENSAGEM.length <= 140) &&
+      (row.DDD.length == 2) &&
+      (row.DDD > 2) &&
+      (row.CELULAR.length == 9) &&
+      (row.CELULAR.substring(0, 1) == 9) &&
+      (row.CELULAR.substring(1, 2) >= 6) &&
+      (row.HORARIO_ENVIO < '19:59:59') && 
+      (row.HORARIO_ENVIO > '08:00:00')){
+        VALIDA = "sim";
+  }
    
 
   if (row.OPERADORA == "VIVO" || row.OPERADORA == "TIM"){
@@ -40,19 +34,39 @@ fs.createReadStream('ENTRADA.csv')
     } else 
     IDBROKER = "BROKER NAO ESPECIFICADO";
     
-    const user = {
-      IDMENSAGEM: row.IDMENSAGEM,
-      DDD: row.DDD,
-      CELULAR: row.CELULAR,
-      OPERADORA: row.OPERADORA,
-      HORARIO_ENVIO: row.HORARIO_ENVIO,
-      MENSAGEM: row.MENSAGEM,
-      IDBROKER,
-      VALIDA
-    }
 
-  users.push(user)
-  })
+
+  var telefonecompleto = row.DDD + row.CELULAR;
+  const https = require('https');
+  var aaa = 'https://front-test-pg.herokuapp.com/blacklist/'+telefonecompleto;
+  
+  let req = https.get(aaa, function(res) {
+  	let data = '',
+      json_data;
+      
+  	res.on('data', function(stream) {
+  		data += stream;
+  	});
+  	res.on('end', function() {
+  	  json_data = JSON.parse(data);
+       
+      
+      if (json_data.active == true){
+        VALIDA = "nao";
+      }
+           
+    });
+  });
+              
+  const user = {
+    IDMENSAGEM: row.IDMENSAGEM,
+    IDBROKER
+  }
+           
+  if (VALIDA == "sim"){ 
+    users.push(user)
+  } 
+})
   .on('end', function () {
       console.table(users)
     })
