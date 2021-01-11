@@ -1,10 +1,9 @@
 const fs = require('fs')
 const csv = require('csv-parser')
-const randomWords = require('random-words')
 const users = [];
 
 
-fs.createReadStream('ENTRADA.csv')
+fs.createReadStream('./ArquivoEntrada/ENTRADA.csv')
 .pipe(csv())
 .on('data', function (row) {
   var VALIDA = "nao";
